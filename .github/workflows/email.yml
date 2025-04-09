@@ -24,7 +24,7 @@ jobs:
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_APP_PASSWORD }}
         subject: GitHub Actions Build Notification
-        to: rutik@gmail.com
+        to: sanskar.jain@galaxyweblinks.in
         from: ${{ secrets.EMAIL_USERNAME }}
         body: |
           ✅ Build completed!
