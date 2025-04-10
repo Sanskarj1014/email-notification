@@ -53,13 +53,18 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # SonarCloud
+        # 1. Setup SonarScanner via GitHub-supported action
+    - name: Set up SonarScanner CLI
+      uses: SonarSource/setup-sonar-scanner@v1
+
+    # 2. Run SonarCloud scan
     - name: SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v5.0.0
       with:
         projectBaseDir: .
-      env:
+        env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
     # OWASP
     - name: Run OWASP Dependency Check
