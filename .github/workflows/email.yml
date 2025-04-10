@@ -40,20 +40,20 @@ jobs:
           format: "ALL"
           out: "reports"
 
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install trivy -y
+    #   - name: Install Trivy
+    #     run: |
+    #       sudo apt-get update
+    #       sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+    #       wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+    #       echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
+    #       sudo apt-get update
+    #       sudo apt-get install trivy -y
 
-      - name: Trivy FS Scan
-        run: trivy fs . > trivyfs.txt
+    #   - name: Trivy FS Scan
+    #     run: trivy fs . > trivyfs.txt
 
-      - name: Trivy Image Scan
-        run: trivy image your-image:latest > trivyimage.txt
+    #   - name: Trivy Image Scan
+    #     run: trivy image your-image:latest > trivyimage.txt
 
       - name: Upload Scan Reports
         uses: actions/upload-artifact@v4
@@ -64,35 +64,35 @@ jobs:
             trivyfs.txt
             trivyimage.txt
 
-  email-job:
-    name: Send Email Notification
-    runs-on: ubuntu-latest
-    needs: sonarQubeScan
+#   email-job:
+#     name: Send Email Notification
+#     runs-on: ubuntu-latest
+#     needs: sonarQubeScan
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
 
-      - name: Simulate Job (Dummy Step)
-        run: echo "Simulating job..."
+#       - name: Simulate Job (Dummy Step)
+#         run: echo "Simulating job..."
 
-      - name: Send Email Notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_APP_PASSWORD }}
-          subject: GitHub Actions Build Notification
-          to: sanskar.jain@galaxyweblinks.in
-          from: ${{ secrets.EMAIL_USERNAME }}
-          body: |
-            ✅ Build completed!
-            🔹 Repository: ${{ github.repository }}
-            🔹 Branch: ${{ github.ref_name }}
-            🔹 Workflow: ${{ github.workflow }}
-            🔹 Run ID: ${{ github.run_id }}
-            🔹 Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          attachments: |
-            ./trivyfs.txt
-            ./trivyimage.txt
+#       - name: Send Email Notification
+#         uses: dawidd6/action-send-mail@v3
+#         with:
+#           server_address: smtp.gmail.com
+#           server_port: 587
+#           username: ${{ secrets.EMAIL_USERNAME }}
+#           password: ${{ secrets.EMAIL_APP_PASSWORD }}
+#           subject: GitHub Actions Build Notification
+#           to: sanskar.jain@galaxyweblinks.in
+#           from: ${{ secrets.EMAIL_USERNAME }}
+#           body: |
+#             ✅ Build completed!
+#             🔹 Repository: ${{ github.repository }}
+#             🔹 Branch: ${{ github.ref_name }}
+#             🔹 Workflow: ${{ github.workflow }}
+#             🔹 Run ID: ${{ github.run_id }}
+#             🔹 Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+#           attachments: |
+#             ./trivyfs.txt
+#             ./trivyimage.txt
