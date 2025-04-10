@@ -45,13 +45,28 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Lint and Test
+      run: |
+        npm run lint
+        npm test
+
     # SonarCloud
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
+      uses: SonarSource/sonarqube-scan-action@v5.0.0
       with:
-        projectBaseDir: .
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        args: >
+          -Dsonar.projectKey=my-org_my-project
+          -Dsonar.organization=my-org
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
     # OWASP
     - name: Run OWASP Dependency Check
