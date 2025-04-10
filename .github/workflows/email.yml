@@ -38,3 +38,51 @@ jobs:
         attachments: |
           ./trivyfs.txt
           ./trivyimage.txt
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # SonarCloud
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: .
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    # OWASP
+    - name: Run OWASP Dependency Check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: "MyProject"
+        format: "ALL"
+        out: "reports"
+
+    # Trivy
+    - name: Install Trivy
+      run: |
+        sudo apt-get update
+        sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install trivy -y
+
+    - name: Trivy FS Scan
+      run: trivy fs . > trivyfs.txt
+
+    - name: Trivy Image Scan
+      run: trivy image your-image:latest > trivyimage.txt
+
+    # Upload all reports
+    - name: Upload Scan Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: scan-reports
+        path: |
+          reports
+          trivyfs.txt
+          trivyimage.txt
