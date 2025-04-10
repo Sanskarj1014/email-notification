@@ -55,13 +55,11 @@ jobs:
 
     # SonarCloud
     - name: SonarCloud Scan
-      uses: SonarSource/sonarqube-scan-action@v5.0.0
+      uses: SonarSource/sonarcloud-github-action@master
       with:
-        args: >
-          -Dsonar.projectKey=sanksarj1014
-          -Dsonar.organization=Sanskarj1014
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.login=${{ secrets.SONAR_TOKEN}}
+        projectBaseDir: .
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # OWASP
     - name: Run OWASP Dependency Check
