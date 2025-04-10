@@ -58,10 +58,10 @@ jobs:
       uses: SonarSource/sonarqube-scan-action@v5.0.0
       with:
         args: >
-          -Dsonar.projectKey=my-org_my-project
-          -Dsonar.organization=my-org
+          -Dsonar.projectKey=sanksarj1014
+          -Dsonar.organization=Sanskarj1014
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN}}
 
     # OWASP
     - name: Run OWASP Dependency Check
