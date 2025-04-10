@@ -53,9 +53,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-        # 1. Setup SonarScanner via GitHub-supported action
-    - name: Set up SonarScanner CLI
-      uses: SonarSource/setup-sonar-scanner@v1
 
     # 2. Run SonarCloud scan
     - name: SonarCloud Scan
