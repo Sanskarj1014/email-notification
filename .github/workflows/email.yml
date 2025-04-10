@@ -60,8 +60,6 @@ jobs:
       - name: Trivy FS Scan
         run: trivy fs . > trivyfs.txt
 
-      - name: Trivy Image Scan
-        run: trivy image your-image:latest > trivyimage.txt
 
       # Upload all reports
       - name: Upload Scan Reports
