@@ -59,7 +59,13 @@ jobs:
       - name: Trivy FS Scan
         run: trivy fs . > trivyfs.txt
 
-
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "Netflix Clone"
+          format: "HTML"
+          out: "reports"
+      
       # Upload all reports
       - name: Upload Scan Reports
         uses: actions/upload-artifact@v4
