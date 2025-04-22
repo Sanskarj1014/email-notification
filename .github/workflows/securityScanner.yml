@@ -1,0 +1,53 @@
+name: CI Security Scans
+
+on:
+  workflow_dispatch:
+
+jobs:
+  security-scans:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Install Java (for Dependency Check)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 👉 OWASP Dependency Check
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "Netflix"
+          path: "."
+          format: "XML"
+          args: "--disableYarnAudit --disableNodeAudit"
+
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: dependency-check-report.xml
+
+      # 👉 Trivy File System Scan
+      - name: Run Trivy FS scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          output: trivyfs.txt
+
+      - name: Upload Trivy FS Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-fs-report
+          path: trivyfs.txt
