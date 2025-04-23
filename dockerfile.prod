@@ -1,0 +1,24 @@
+# Dockerfile.prod
+
+# 1. Use a lightweight Node base image
+FROM node:18-alpine
+
+# 2. Set working directory
+WORKDIR /app
+
+# 3. Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install --production
+
+# 4. Copy the rest of the application
+COPY . .
+
+# 5. Set environment variables (if needed)
+ARG TMDB_V3_API_KEY
+ENV TMDB_V3_API_KEY=$TMDB_V3_API_KEY
+
+# 6. Expose the port your app runs on (change if different)
+EXPOSE 3000
+
+# 7. Start the application
+CMD ["node", "dist/main.js"]

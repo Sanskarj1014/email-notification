@@ -26,6 +26,7 @@ jobs:
       # Build Docker image
       - name: Build Docker image
         run: |
+          -f Dockerfile.prod \
           docker build --build-arg TMDB_V3_API_KEY=${{ secrets.TMDB_V3_API_KEY }}/ -t netflix .
 
       # Tag & Push Docker image
