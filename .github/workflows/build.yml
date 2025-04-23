@@ -24,10 +24,17 @@ jobs:
         #   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Build Docker image
+      # - name: Build Docker image
+      #   run: |
+      #     -f Dockerfile.prod \
+      #     docker build --build-arg TMDB_V3_API_KEY=${{ secrets.TMDB_V3_API_KEY }}/ -t netflix .
+
       - name: Build Docker image
         run: |
-          -f Dockerfile.prod \
-          docker build --build-arg TMDB_V3_API_KEY=${{ secrets.TMDB_V3_API_KEY }}/ -t netflix .
+          docker build \
+            -f Dockerfile.prod \
+            --build-arg TMDB_V3_API_KEY=${{ secrets.TMDB_V3_API_KEY }} \
+            -t netflix .
 
       # Tag & Push Docker image
       - name: Tag and Push image
