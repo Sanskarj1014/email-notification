@@ -4,6 +4,84 @@ on:
   workflow_dispatch:
 
 jobs:
+  sonarQubeScan:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Important for SonarQube to analyze all history
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+  
+      - name: Print JAVA_HOME and Java version
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          $JAVA_HOME/bin/java -version
+
+          # /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.14-7/x64
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+            project: 'Netflix Clone'
+            path: '.'
+            format: 'HTML'
+            out: 'reports'
+            args: '--noupdate'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup SonarQube Scanner
+        run: |
+          mkdir -p $HOME/sonar
+          curl -sSLo $HOME/sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip -o $HOME/sonar/sonar-scanner.zip -d $HOME/sonar/
+
+      - name: Run SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          $HOME/sonar/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
+            -Dsonar.projectKey=sanskar-test \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonar.atg.galaxysofttech.co.in \
+            -Dsonar.token=$SONAR_TOKEN
+
+          
+      # Trivy
+      - name: Install Trivy
+        run: |
+            sudo apt-get update
+            sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+            echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+            sudo apt-get update
+            sudo apt-get install trivy -y
+
+      - name: Trivy FS Scan
+        run: trivy fs . > trivyfs.txt
+      
+      # Upload all reports
+      - name: Upload Scan Reports
+        uses: actions/upload-artifact@v4
+        with:
+            name: scan-reports
+            path: |
+                reports
+                trivyfs.txt
+                trivyimage.txt
   docker:
     runs-on: ubuntu-latest
 
