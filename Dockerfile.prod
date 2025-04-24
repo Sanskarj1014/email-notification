@@ -37,7 +37,7 @@ RUN npm install --production
 COPY . .
 
 # Optional: Build your app if it's a frontend or needs transpilation
-RUN npm run build
+# RUN npm run build
 
 # Set environment variables if needed (can also be injected at runtime)
 ARG TMDB_V3_API_KEY
