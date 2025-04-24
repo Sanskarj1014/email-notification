@@ -138,3 +138,36 @@ jobs:
       - name: Run Docker Container
         run: |
           docker run -d --name netflix -p 8081:80 ${{ secrets.DOCKER_USERNAME }}/netflix:latest
+
+  email-job:
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+ 
+    - name: Run a dummy job
+      run: echo "Simulating job..."
+ 
+    - name: Send Email Notification
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_APP_PASSWORD }}
+        subject: GitHub Actions Build Notification
+        to: sanskar.jain@galaxyweblinks.in
+        from: ${{ secrets.EMAIL_USERNAME }}
+        body: |
+          ✅ Build completed!
+ 
+          🔹 Repository: ${{ github.repository }}
+          🔹 Branch: ${{ github.ref_name }}
+          🔹 Workflow: ${{ github.workflow }}
+          🔹 Run ID: ${{ github.run_id }}
+          🔹 Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+ 
+        attachments: |
+          ./trivyfs.txt
+          ./trivyimage.txt
