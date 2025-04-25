@@ -34,6 +34,8 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Run app (start script)
+        run: npm start
       # - name: Print JAVA_HOME and Java version
       #   run: |
       #     echo "JAVA_HOME=$JAVA_HOME"
