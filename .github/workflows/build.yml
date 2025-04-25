@@ -85,7 +85,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     env:
-      VERSION_TAG: "1.0.0"
+      VERSION_TAG: ${{ github.run_number }}
 
     steps:
       - name: Checkout Code
@@ -117,14 +117,19 @@ jobs:
             -t netflix .
 
       # Tag & Push Docker image
+      # - name: Tag and Push image
+      #   run: |
+      #     docker tag netflix ${{ secrets.DOCKER_USERNAME }}/netflix:latest
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/netflix:latest
+
+      # - name: Tag and push image to Docker Hub
+        # run: |
+        #   docker tag netflix:${{ env.VERSION_TAG }} ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
+        #   docker push ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
+
       - name: Tag and Push image
         run: |
-          docker tag netflix ${{ secrets.DOCKER_USERNAME }}/netflix:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/netflix:latest
-
-      - name: Tag and push image to Docker Hub
-        run: |
-          docker tag netflix:${{ env.VERSION_TAG }} ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
+          docker tag netflix ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
           docker push ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
 
       # Trivy image scan
