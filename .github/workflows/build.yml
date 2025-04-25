@@ -25,6 +25,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
   
+      - name: Verify Java version
+        run: java -version
+
+      - name: Install dependencies
+        run: npm install
+  
+      - name: Build
+        run: npm run build
+
       # - name: Print JAVA_HOME and Java version
       #   run: |
       #     echo "JAVA_HOME=$JAVA_HOME"
@@ -40,8 +49,25 @@ jobs:
       #       out: 'reports'
       #       args: '--noupdate'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Run OWASP Dependency-Check
+        run: |
+          mkdir -p reports
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            -v ${{ github.workspace }}/reports:/report \
+            owasp/dependency-check \
+            --scan /src \
+            --format XML \
+            --project "OWASP Dependency Check" \
+            --out /report \
+            --disableYarnAudit \
+            --disableNodeAudit
+
+      - name: Upload Dependency Check Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: reports/dependency-check-report.xml
 
       - name: Setup SonarQube Scanner
         run: |
