@@ -175,10 +175,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clean workspace
-        run: |
-          rm -rf *
-
       - name: Checkout Code
         uses: actions/checkout@v3
 
