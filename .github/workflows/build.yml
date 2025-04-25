@@ -84,6 +84,8 @@ jobs:
                 trivyimage.txt
   docker:
     runs-on: ubuntu-latest
+    env:
+      VERSION_TAG: "1.0.0"
 
     steps:
       - name: Checkout Code
@@ -119,6 +121,11 @@ jobs:
         run: |
           docker tag netflix ${{ secrets.DOCKER_USERNAME }}/netflix:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/netflix:latest
+
+      - name: Tag and push image to Docker Hub
+        run: |
+          docker tag netflix:${{ env.VERSION_TAG }} ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/netflix:${{ env.VERSION_TAG }}
 
       # Trivy image scan
       - name: Trivy Image Scan
