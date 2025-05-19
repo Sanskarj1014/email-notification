@@ -49,16 +49,29 @@ jobs:
           curl -sSLo $HOME/sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
           unzip -o $HOME/sonar/sonar-scanner.zip -d $HOME/sonar/
 
-      - name: Run SonarQube Scan
+      # - name: Run SonarQube Scan
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: |
+      #     $HOME/sonar/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
+      #       -Dsonar.projectKey=sanskar-test \
+      #       -Dsonar.sources=. \
+      #       -Dsonar.host.url=https://sonar.atg.galaxysofttech.co.in \
+      #       -Dsonar.token=$SONAR_TOKEN
+      - name: Run SonarQube Scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: "https://sonarqube.io"
         run: |
-          $HOME/sonar/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
-            -Dsonar.projectKey=sanskar-test \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=https://sonar.atg.galaxysofttech.co.in \
-            -Dsonar.token=$SONAR_TOKEN
-
+          npm install -g sonarqube-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=${{ secrets.PROJECT_KEY }} \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.token=$SONAR_TOKEN #\
+            #-Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            #-Dsonar.pullrequest.branch=${{ github.head_ref }} \
+            #-Dsonar.pullrequest.base=${{ github.base_ref }} \
+            #-Dsonar.pullrequest.github.repository=${{ github.repository }}
           
       # Trivy
       - name: Install Trivy
